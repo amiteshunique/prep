@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-void print_graph(struct adj_list *adj_l);
+
 
 /***** Adjacency List for undirected graph *****/
 struct adj_list {
@@ -9,6 +9,7 @@ struct adj_list {
         int *adj_sz;
         int v;
 };
+void print_graph(struct adj_list *adj_l);
 
 struct adj_list *adj_init(int v) {
         struct adj_list *adj_l = (struct adj_list *) calloc(sizeof(struct adj_list), 1);
@@ -75,13 +76,14 @@ void bfs(struct adj_list *adj_l, int visited[]) {
                 if (visited[node] == 1)
                         continue;
                 printf("%d ", node);
+                visited[node] = 1;
                 int len = adj_l->adj_sz[node];
                 for(int i=0; i<=len; i++) {
-                        if (visited[i] == 1)
+                        int curr_node = adj_l->adj[node][i];
+                        if (visited[curr_node] == 1)
                                 continue;
-                        enq(i);
+                        enq(curr_node);
                 }
-                visited[node] = 1;
         }
 }
 
@@ -105,6 +107,37 @@ void print_bfs(struct adj_list *adj_l) {
         }
 }
 
+/******************** DFS for undirected disconnected graph **********/
+void dfs(int node, struct adj_list *adj_l, int visited[]) {
+        visited[node] = 1;
+        printf("%d ", node);
+
+        for(int i=0; i <= adj_l->adj_sz[node]; i++) {
+                int curr_node = adj_l->adj[node][i];
+                if (visited[curr_node]  == 0) {
+                        dfs(curr_node, adj_l, visited);
+                }
+        }
+}
+
+void print_dfs(struct adj_list *adj_l) {
+        int len = adj_l->v;
+        int visited[len];
+        for(int i=0; i<len; i++) {
+                visited[i] = 0;
+        }
+
+        printf("\nDFS: \n");
+        //We loop for all non-visited nodes to catch the disconnected parts of the graphs.
+        for(int i=0; i < len; i++) {
+                if(visited[i] == 0) {
+                        dfs(i, adj_l, visited);
+                }
+        }
+        printf("\n");
+}
+
+
 int main() {
         int v=7;
 
@@ -122,6 +155,7 @@ int main() {
         print_graph(adj);
 
         print_bfs(adj);
+        print_dfs(adj);
         return 0;
 }
 
