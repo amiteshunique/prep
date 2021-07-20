@@ -7,26 +7,21 @@ struct node{
         struct node *next;
 };
 
-struct node *list_reverse_recursive(struct node* curr) {
-        if(curr == NULL) {
-                return curr;
-        }
-
-        struct node *lt;
-        last = curr;
-        curr = curr->next;
-        last->next = NULL;
-
-        while(curr != NULL) {
-                struct node *tmp;
-                tmp = curr->next;
-                curr->next = last;
-                last = curr;
-                curr = tmp;
-        }
-
-        return last;
-}
+struct node *list_reverse_recursive(struct node* curr, struct node *prev) {                                                                      
+        int flag = 0;                                                                                                                            
+        if(curr->next == NULL) {                                                                                                                 
+                flag = 1;                                                                                                                        
+        }                                                                                                                                        
+                                                                                                                                                 
+        struct node* next = curr->next;                                                                                                          
+        curr->next = prev;                                                                                                                       
+        if (flag) {                                                                                                                              
+                return curr;                                                                                                                     
+        } else {                                                                                                                                 
+                return list_reverse_recursive(next, curr);                                                                                       
+        }                                                                                                                                        
+                                                                                                                                                 
+}             
 
 struct node *list_reverse_iterative(struct node* curr) {
         if(curr == NULL) {
@@ -83,7 +78,7 @@ int main() {
         head = list_reverse_iterative(head);
         list_print(head);
 
-        head = list_reverse_recursive(head);
+        head = list_reverse_recursive(head, NULL);
         list_print(head);
 
         return 0;
